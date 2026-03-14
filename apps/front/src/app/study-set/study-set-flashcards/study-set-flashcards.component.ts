@@ -7,6 +7,7 @@ import { faThumbsUp, faCake, faVolumeUp, faPlay, faPause } from "@fortawesome/fr
 import { DomSanitizer, Meta, Title } from "@angular/platform-browser";
 import { NgForm } from "@angular/forms";
 import { faQuestionCircle } from "@fortawesome/free-regular-svg-icons";
+import { EdgeTTSBrowser } from "edge-tts-universal";
 
 @Component({
   selector: "scholarsome-study-set-flashcards",
@@ -63,6 +64,9 @@ export class StudySetFlashcardsComponent implements OnInit {
   protected autoplayEnabled = false;
   protected termLanguage = "en-US";
   protected definitionLanguage = "de-DE";
+  protected useEnhancedTTS = true;
+
+  private currentAudio: HTMLAudioElement | null = null;
 
   protected modalRef?: BsModalRef;
   protected readonly faThumbsUp = faThumbsUp;
@@ -214,6 +218,7 @@ export class StudySetFlashcardsComponent implements OnInit {
     this.autoplayEnabled = form.value["enable-autoplay"] === "yes";
     this.termLanguage = form.value["term-lang"];
     this.definitionLanguage = form.value["definition-lang"];
+    this.useEnhancedTTS = form.value["enhanced-tts"] === "yes";
 
     this.sideText = this.cards[0][this.side as keyof Card] as string;
     this.currentCard = this.cards[0];
@@ -226,10 +231,43 @@ export class StudySetFlashcardsComponent implements OnInit {
   speakCurrentSide() {
     if (!this.ttsEnabled) return;
     const lang = this.side === "term" ? this.termLanguage : this.definitionLanguage;
-    this.speak(this.sideText, lang);
+    this.speak(this.stripHtml(this.sideText), lang);
   }
 
-  speak(text: string, lang: string) {
+  stripHtml(html: string): string {
+    const tmp = document.createElement("DIV");
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || "";
+  }
+
+  async speak(text: string, lang: string) {
+    if (this.currentAudio) {
+      this.currentAudio.pause();
+      this.currentAudio = null;
+    }
+
+    if (this.useEnhancedTTS) {
+      try {
+        const voiceMap: { [key: string]: string } = {
+          "en-US": "en-US-AndrewNeural",
+          "de-DE": "de-DE-KillianNeural",
+          "es-ES": "es-ES-AlvaroNeural",
+          "fr-FR": "fr-FR-RemyNeural"
+        };
+
+        const voice = voiceMap[lang] || voiceMap["en-US"];
+        const tts = new EdgeTTSBrowser(text, voice);
+        const result = await tts.synthesize();
+        const url = URL.createObjectURL(result.audio);
+
+        this.currentAudio = new Audio(url);
+        await this.currentAudio.play();
+        return;
+      } catch (e) {
+        console.error("Enhanced TTS failed, falling back to system TTS", e);
+      }
+    }
+
     if (!window.speechSynthesis) {
       console.warn("Speech synthesis not supported");
       return;
