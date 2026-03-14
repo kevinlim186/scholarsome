@@ -27,6 +27,11 @@ import {
   faArrowAltCircleRight,
   faRectangleList
 } from "@fortawesome/free-regular-svg-icons";
+import {
+  faVolumeUp,
+  faPlay,
+  faPause
+} from "@fortawesome/free-solid-svg-icons";
 import { CreateModule } from "./create/create.module";
 import { AppRoutingModule } from "./app-routing.module";
 import { LandingModule } from "./landing/landing.module";
@@ -131,7 +136,10 @@ export class AppModule {
         faPenToSquare,
         faComments,
         faFlag,
-        faRectangleList
+        faRectangleList,
+        faVolumeUp,
+        faPlay,
+        faPause
     );
   }
 }

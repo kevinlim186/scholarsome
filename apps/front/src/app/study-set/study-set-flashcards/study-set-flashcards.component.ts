@@ -3,7 +3,7 @@ import { SetsService } from "../../shared/http/sets.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Card } from "@prisma/client";
 import { BsModalRef } from "ngx-bootstrap/modal";
-import { faThumbsUp, faCake } from "@fortawesome/free-solid-svg-icons";
+import { faThumbsUp, faCake, faVolumeUp, faPlay, faPause } from "@fortawesome/free-solid-svg-icons";
 import { DomSanitizer, Meta, Title } from "@angular/platform-browser";
 import { NgForm } from "@angular/forms";
 import { faQuestionCircle } from "@fortawesome/free-regular-svg-icons";
@@ -59,9 +59,17 @@ export class StudySetFlashcardsComponent implements OnInit {
   // needed to prevent animation classes from being applied until first click
   protected flipInteraction = false;
 
+  protected ttsEnabled = false;
+  protected autoplayEnabled = false;
+  protected termLanguage = "en-US";
+  protected definitionLanguage = "de-DE";
+
   protected modalRef?: BsModalRef;
   protected readonly faThumbsUp = faThumbsUp;
   protected readonly faCake = faCake;
+  protected readonly faVolumeUp = faVolumeUp;
+  protected readonly faPlay = faPlay;
+  protected readonly faPause = faPause;
   protected readonly faQuestionCircle = faQuestionCircle;
 
   @HostListener("document:keypress", ["$event"])
@@ -124,6 +132,10 @@ export class StudySetFlashcardsComponent implements OnInit {
         this.sideText = this.cards[this.index].term;
         this.side = "term";
       }
+
+      if (this.autoplayEnabled) {
+        this.speakCurrentSide();
+      }
     }, 150);
   }
 
@@ -182,6 +194,10 @@ export class StudySetFlashcardsComponent implements OnInit {
 
     this.sideText =
       this.answer === "definition" ? this.cards[this.index].term : this.cards[this.index].definition;
+
+    if (this.autoplayEnabled) {
+      this.speakCurrentSide();
+    }
   }
 
   beginFlashcards(form: NgForm) {
@@ -194,8 +210,54 @@ export class StudySetFlashcardsComponent implements OnInit {
       this.shufflingEnabled = true;
     }
 
+    this.ttsEnabled = form.value["enable-tts"] === "yes";
+    this.autoplayEnabled = form.value["enable-autoplay"] === "yes";
+    this.termLanguage = form.value["term-lang"];
+    this.definitionLanguage = form.value["definition-lang"];
+
     this.sideText = this.cards[0][this.side as keyof Card] as string;
     this.currentCard = this.cards[0];
+
+    if (this.autoplayEnabled) {
+      this.speakCurrentSide();
+    }
+  }
+
+  speakCurrentSide() {
+    if (!this.ttsEnabled) return;
+    const lang = this.side === "term" ? this.termLanguage : this.definitionLanguage;
+    this.speak(this.sideText, lang);
+  }
+
+  speak(text: string, lang: string) {
+    if (!window.speechSynthesis) {
+      console.warn("Speech synthesis not supported");
+      return;
+    }
+
+    // Cancel any ongoing speech
+    window.speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = lang;
+
+    // Try to find a high-quality voice for the language
+    const voices = window.speechSynthesis.getVoices();
+    const preferredVoice = voices.find(v => v.lang.startsWith(lang.split("-")[0]) && (v.name.includes("Siri") || v.name.includes("Premium") || v.name.includes("Enhanced")));
+    if (preferredVoice) {
+      utterance.voice = preferredVoice;
+    } else {
+      const standardVoice = voices.find(v => v.lang.startsWith(lang.split("-")[0]));
+      if (standardVoice) {
+        utterance.voice = standardVoice;
+      }
+    }
+
+    window.speechSynthesis.speak(utterance);
+  }
+
+  toggleAutoplay() {
+    this.autoplayEnabled = !this.autoplayEnabled;
   }
 
   reloadPage() {
