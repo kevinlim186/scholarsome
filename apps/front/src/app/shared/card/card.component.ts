@@ -16,6 +16,7 @@ import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { DomSanitizer } from "@angular/platform-browser";
 import { ViewportScroller } from "@angular/common";
 import { DeviceDetectorService } from "ngx-device-detector";
+// @ts-ignore
 import Quill from "quill";
 
 @Component({

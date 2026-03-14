@@ -1,41 +1,28 @@
-version: "3.9"
 services:
   redis:
     image: redis:latest
-    expose:
-      - "6379:6379"
     command: >
       redis-server
-      --save 900 1
-      --appendonly yes
-      --appendfilename "appendonly.aof"
-      --dir "/data"
+      --save 20 1
       --requirepass ${DATABASE_PASSWORD}
+      --tcp-keepalive 60
+      --timeout 0
     volumes:
       - redis:/data
     restart: always
-  mariadb:
-    image: mariadb:latest
-    expose:
-      - "3306:3306"
-    environment:
-      - "MARIADB_RANDOM_ROOT_PASSWORD=yes"
-      - "MARIADB_ROOT_HOST=localhost"
-      - "MARIADB_DATABASE=scholarsome"
-      - "MARIADB_USER=scholarsome"
-      - "MARIADB_PASSWORD=${DATABASE_PASSWORD}"
-    volumes:
-      - mariadb:/var/lib/mysql
-    restart: always
   scholarsome:
-    image: hwgilbert16/scholarsome:latest
+#    image: hwgilbert16/scholarsome:latest
+    image: scholarsome-kevin:1.01
     platform: "linux/amd64"
+    # network_mode: host
     ports:
-      - "${HTTP_PORT}:${HTTP_PORT}"
+       - "${HTTP_PORT}:${HTTP_PORT}"
 #      - "(your ssl port):8443"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       - "NODE_ENV=${NODE_ENV}"
-      - "DATABASE_URL=mysql://scholarsome:${DATABASE_PASSWORD}@mariadb:3306/scholarsome"
+      - "DATABASE_URL=mysql://${SQL_USER}:${SQL_PASSWORD}@10.0.0.1:3306/flashcard"
       - "JWT_SECRET=${JWT_SECRET}"
       - "HTTP_PORT=${HTTP_PORT}"
       - "STORAGE_TYPE=${STORAGE_TYPE}"
@@ -61,10 +48,9 @@ services:
     volumes:
       - scholarsome:/data
     depends_on:
-      - mariadb
       - redis
     restart: always
 volumes:
   redis:
-  mariadb:
+    driver: local
   scholarsome:
