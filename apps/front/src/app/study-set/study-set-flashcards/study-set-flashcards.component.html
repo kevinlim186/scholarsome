@@ -51,6 +51,17 @@
           </div>
         </div>
         <div class="mb-3" *ngIf="configForm.value['enable-tts'] === 'yes'">
+          <label class="form-label fs-5">Enhanced Reading Model</label>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="enhanced-tts" id="enhanced-yes" value="yes" [ngModel]="'yes'" required>
+            <label class="form-check-label" for="enhanced-yes">Yes (Better voices, requires internet)</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="enhanced-tts" id="enhanced-no" value="no" ngModel required>
+            <label class="form-check-label" for="enhanced-no">No (System voices)</label>
+          </div>
+        </div>
+        <div class="mb-3" *ngIf="configForm.value['enable-tts'] === 'yes'">
           <label class="form-label fs-5">Autoplay</label>
           <div class="form-check">
             <input class="form-check-input" type="radio" name="enable-autoplay" id="autoplay-yes" value="yes" ngModel required>
