@@ -60,13 +60,13 @@ export class StudySetFlashcardsComponent implements OnInit {
   // needed to prevent animation classes from being applied until first click
   protected flipInteraction = false;
 
-  protected ttsEnabled = false;
-  protected autoplayEnabled = false;
+  protected ttsEnabled = true;
+  protected autoplayEnabled = true;
   protected termLanguage = "en-US";
   protected definitionLanguage = "de-DE";
   protected useEnhancedTTS = true;
 
-  private currentAudio: HTMLAudioElement | null = null;
+  private currentAudio = new Audio();
 
   protected modalRef?: BsModalRef;
   protected readonly faThumbsUp = faThumbsUp;
@@ -220,11 +220,29 @@ export class StudySetFlashcardsComponent implements OnInit {
     this.definitionLanguage = form.value["definition-lang"];
     this.useEnhancedTTS = form.value["enhanced-tts"] === "yes";
 
+    // Unlock audio for iOS Safari
+    this.unlockAudio();
+
     this.sideText = this.cards[0][this.side as keyof Card] as string;
     this.currentCard = this.cards[0];
 
     if (this.autoplayEnabled) {
       this.speakCurrentSide();
+    }
+  }
+
+  unlockAudio() {
+    // Play and immediately pause a silent sound to unlock audio on iOS
+    this.currentAudio.src = "data:audio/wav;base64,UklGRigAAABXQVZFRm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==";
+    this.currentAudio.play().then(() => {
+      this.currentAudio.pause();
+    }).catch(e => console.warn("Audio unlock failed", e));
+
+    // Also unlock SpeechSynthesis for iOS
+    if (window.speechSynthesis) {
+      const utterance = new SpeechSynthesisUtterance("");
+      utterance.volume = 0;
+      window.speechSynthesis.speak(utterance);
     }
   }
 
@@ -241,10 +259,7 @@ export class StudySetFlashcardsComponent implements OnInit {
   }
 
   async speak(text: string, lang: string) {
-    if (this.currentAudio) {
-      this.currentAudio.pause();
-      this.currentAudio = null;
-    }
+    this.currentAudio.pause();
 
     if (this.useEnhancedTTS) {
       try {
@@ -260,7 +275,7 @@ export class StudySetFlashcardsComponent implements OnInit {
         const result = await tts.synthesize();
         const url = URL.createObjectURL(result.audio);
 
-        this.currentAudio = new Audio(url);
+        this.currentAudio.src = url;
         await this.currentAudio.play();
         return;
       } catch (e) {
@@ -279,11 +294,15 @@ export class StudySetFlashcardsComponent implements OnInit {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = lang;
 
-    // Try to find a high-quality voice for the language
+    // Try to find a high-quality voice for the language, prioritizing Siri
     const voices = window.speechSynthesis.getVoices();
-    const preferredVoice = voices.find(v => v.lang.startsWith(lang.split("-")[0]) && (v.name.includes("Siri") || v.name.includes("Premium") || v.name.includes("Enhanced")));
-    if (preferredVoice) {
-      utterance.voice = preferredVoice;
+    const siriVoice = voices.find(v => v.lang.startsWith(lang.split("-")[0]) && v.name.includes("Siri"));
+    const premiumVoice = voices.find(v => v.lang.startsWith(lang.split("-")[0]) && (v.name.includes("Premium") || v.name.includes("Enhanced")));
+
+    if (siriVoice) {
+      utterance.voice = siriVoice;
+    } else if (premiumVoice) {
+      utterance.voice = premiumVoice;
     } else {
       const standardVoice = voices.find(v => v.lang.startsWith(lang.split("-")[0]));
       if (standardVoice) {

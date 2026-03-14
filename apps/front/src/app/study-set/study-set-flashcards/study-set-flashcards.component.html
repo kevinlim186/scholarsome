@@ -42,33 +42,33 @@
         <div class="mb-3">
           <label class="form-label fs-5">Text-to-Speech</label>
           <div class="form-check">
-            <input class="form-check-input" type="radio" name="enable-tts" id="tts-yes" value="yes" ngModel required>
+            <input class="form-check-input" type="radio" name="enable-tts" id="tts-yes" value="yes" [ngModel]="ttsEnabled ? 'yes' : 'no'" required>
             <label class="form-check-label" for="tts-yes">Enabled</label>
           </div>
           <div class="form-check">
-            <input class="form-check-input" type="radio" name="enable-tts" id="tts-no" value="no" [ngModel]="'no'" required>
+            <input class="form-check-input" type="radio" name="enable-tts" id="tts-no" value="no" [ngModel]="ttsEnabled ? 'yes' : 'no'" required>
             <label class="form-check-label" for="tts-no">Disabled</label>
           </div>
         </div>
         <div class="mb-3" *ngIf="configForm.value['enable-tts'] === 'yes'">
           <label class="form-label fs-5">Enhanced Reading Model</label>
           <div class="form-check">
-            <input class="form-check-input" type="radio" name="enhanced-tts" id="enhanced-yes" value="yes" [ngModel]="'yes'" required>
+            <input class="form-check-input" type="radio" name="enhanced-tts" id="enhanced-yes" value="yes" [ngModel]="useEnhancedTTS ? 'yes' : 'no'" required>
             <label class="form-check-label" for="enhanced-yes">Yes (Better voices, requires internet)</label>
           </div>
           <div class="form-check">
-            <input class="form-check-input" type="radio" name="enhanced-tts" id="enhanced-no" value="no" ngModel required>
+            <input class="form-check-input" type="radio" name="enhanced-tts" id="enhanced-no" value="no" [ngModel]="useEnhancedTTS ? 'yes' : 'no'" required>
             <label class="form-check-label" for="enhanced-no">No (System voices)</label>
           </div>
         </div>
         <div class="mb-3" *ngIf="configForm.value['enable-tts'] === 'yes'">
           <label class="form-label fs-5">Autoplay</label>
           <div class="form-check">
-            <input class="form-check-input" type="radio" name="enable-autoplay" id="autoplay-yes" value="yes" ngModel required>
+            <input class="form-check-input" type="radio" name="enable-autoplay" id="autoplay-yes" value="yes" [ngModel]="autoplayEnabled ? 'yes' : 'no'" required>
             <label class="form-check-label" for="autoplay-yes">Yes</label>
           </div>
           <div class="form-check">
-            <input class="form-check-input" type="radio" name="enable-autoplay" id="autoplay-no" value="no" [ngModel]="'no'" required>
+            <input class="form-check-input" type="radio" name="enable-autoplay" id="autoplay-no" value="no" [ngModel]="autoplayEnabled ? 'yes' : 'no'" required>
             <label class="form-check-label" for="autoplay-no">No</label>
           </div>
         </div>
