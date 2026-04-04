@@ -8,6 +8,9 @@ const outputDir = 'apps/front/src/assets/icons';
 const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
 
 async function generateIcons() {
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
+  }
   for (const size of sizes) {
     await sharp(inputSvg)
       .resize(size, size)
