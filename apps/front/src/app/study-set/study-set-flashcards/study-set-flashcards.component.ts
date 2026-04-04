@@ -6,8 +6,10 @@ import { BsModalRef } from "ngx-bootstrap/modal";
 import { faThumbsUp, faCake, faVolumeUp, faPlay, faPause } from "@fortawesome/free-solid-svg-icons";
 import { DomSanitizer, Meta, Title } from "@angular/platform-browser";
 import { NgForm } from "@angular/forms";
-import { faQuestionCircle } from "@fortawesome/free-regular-svg-icons";
+import { faQuestionCircle, faSave } from "@fortawesome/free-regular-svg-icons";
 import { EdgeTTSBrowser } from "edge-tts-universal";
+import { OfflineStorageService } from "../../shared/offline-storage.service";
+import { OfflineTTSService } from "../../shared/offline-tts.service";
 
 @Component({
   selector: "scholarsome-study-set-flashcards",
@@ -21,7 +23,9 @@ export class StudySetFlashcardsComponent implements OnInit {
     private readonly router: Router,
     private readonly titleService: Title,
     private readonly metaService: Meta,
-    public readonly sanitizer: DomSanitizer
+    public readonly sanitizer: DomSanitizer,
+    private readonly offlineStorage: OfflineStorageService,
+    private readonly offlineTTS: OfflineTTSService
   ) {}
 
   @ViewChild("flashcardsConfig") configModal: TemplateRef<HTMLElement>;
@@ -65,11 +69,14 @@ export class StudySetFlashcardsComponent implements OnInit {
   protected termLanguage = "en-US";
   protected definitionLanguage = "de-DE";
   protected useEnhancedTTS = true;
+  protected isOffline = !navigator.onLine;
+  protected isSavedOffline = false;
 
   private currentAudio = new Audio();
 
   protected modalRef?: BsModalRef;
   protected readonly faThumbsUp = faThumbsUp;
+  protected readonly faSave = faSave;
   protected readonly faCake = faCake;
   protected readonly faVolumeUp = faVolumeUp;
   protected readonly faPlay = faPlay;
@@ -258,8 +265,25 @@ export class StudySetFlashcardsComponent implements OnInit {
     return tmp.textContent || tmp.innerText || "";
   }
 
+  async saveForOffline() {
+    if (!this.setId) return;
+    const set = await this.sets.set(this.setId);
+    if (set) {
+      await this.offlineStorage.saveStudySet(set);
+      await this.offlineTTS.downloadVoice(this.termLanguage);
+      await this.offlineTTS.downloadVoice(this.definitionLanguage);
+      this.isSavedOffline = true;
+      alert("Collection saved for offline use!");
+    }
+  }
+
   async speak(text: string, lang: string) {
     this.currentAudio.pause();
+
+    if (this.isOffline || (this.isSavedOffline && !navigator.onLine)) {
+      await this.offlineTTS.speak(text, lang);
+      return;
+    }
 
     if (this.useEnhancedTTS) {
       try {
@@ -330,7 +354,20 @@ export class StudySetFlashcardsComponent implements OnInit {
       return;
     }
 
-    const set = await this.sets.set(this.setId);
+    let set: (Set & { cards: Card[] }) | null = null;
+
+    if (navigator.onLine) {
+      try {
+        set = await this.sets.set(this.setId);
+      } catch (e) {
+        console.warn("Failed to fetch set from API, checking offline storage", e);
+      }
+    }
+
+    if (!set) {
+      set = await this.offlineStorage.getStudySet(this.setId);
+    }
+
     if (!set) {
       await this.router.navigate(["404"]);
       return;
@@ -343,6 +380,13 @@ export class StudySetFlashcardsComponent implements OnInit {
     this.cards = set.cards.sort((a, b) => {
       return a.index - b.index;
     });
+
+    this.offlineStorage.getStudySet(this.setId).then(set => {
+      this.isSavedOffline = !!set;
+    });
+
+    window.addEventListener("online", () => this.isOffline = false);
+    window.addEventListener("offline", () => this.isOffline = true);
 
     this.updateIndex();
   }
