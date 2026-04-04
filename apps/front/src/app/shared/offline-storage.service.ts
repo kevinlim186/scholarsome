@@ -27,7 +27,7 @@ export class OfflineStorageService {
     });
   }
 
-  async saveStudySet(set: StudySet & { cards: Card[] }): Promise<void> {
+  async saveStudySet(set: StudySet): Promise<void> {
     const db = await this.openDB();
     const transaction = db.transaction("studySets", "readwrite");
     const store = transaction.objectStore("studySets");
@@ -39,7 +39,7 @@ export class OfflineStorageService {
     });
   }
 
-  async getStudySet(id: string): Promise<(StudySet & { cards: Card[] }) | null> {
+  async getStudySet(id: string): Promise<StudySet | null> {
     const db = await this.openDB();
     const transaction = db.transaction("studySets", "readonly");
     const store = transaction.objectStore("studySets");
@@ -51,7 +51,7 @@ export class OfflineStorageService {
     });
   }
 
-  async getAllStudySets(): Promise<(StudySet & { cards: Card[] })[]> {
+  async getAllStudySets(): Promise<StudySet[]> {
     const db = await this.openDB();
     const transaction = db.transaction("studySets", "readonly");
     const store = transaction.objectStore("studySets");
