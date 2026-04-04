@@ -10,6 +10,7 @@ import { faQuestionCircle, faSave } from "@fortawesome/free-regular-svg-icons";
 import { EdgeTTSBrowser } from "edge-tts-universal";
 import { OfflineStorageService } from "../../shared/offline-storage.service";
 import { OfflineTTSService } from "../../shared/offline-tts.service";
+import { Set as StudySet } from "@scholarsome/shared";
 
 @Component({
   selector: "scholarsome-study-set-flashcards",
@@ -354,7 +355,7 @@ export class StudySetFlashcardsComponent implements OnInit {
       return;
     }
 
-    let set: (Set & { cards: Card[] }) | null = null;
+    let set: (StudySet & { cards: Card[] }) | null = null;
 
     if (navigator.onLine) {
       try {
@@ -377,7 +378,7 @@ export class StudySetFlashcardsComponent implements OnInit {
     this.metaService.addTag({ name: "description", content: "Begin studying flashcards " + set.title + " study set on Scholarsome. Improve your memorization skills by taking a quiz." });
 
     // sort the cards by index
-    this.cards = set.cards.sort((a, b) => {
+    this.cards = set.cards.sort((a: Card, b: Card) => {
       return a.index - b.index;
     });
 

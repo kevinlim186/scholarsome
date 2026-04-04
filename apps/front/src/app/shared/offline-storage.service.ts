@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Card } from "@prisma/client";
-import { User, Set } from "@scholarsome/shared";
+import { User, Set as StudySet } from "@scholarsome/shared";
 
 @Injectable({
   providedIn: "root"
@@ -27,7 +27,7 @@ export class OfflineStorageService {
     });
   }
 
-  async saveStudySet(set: Set & { cards: Card[] }): Promise<void> {
+  async saveStudySet(set: StudySet & { cards: Card[] }): Promise<void> {
     const db = await this.openDB();
     const transaction = db.transaction("studySets", "readwrite");
     const store = transaction.objectStore("studySets");
@@ -39,7 +39,7 @@ export class OfflineStorageService {
     });
   }
 
-  async getStudySet(id: string): Promise<(Set & { cards: Card[] }) | null> {
+  async getStudySet(id: string): Promise<(StudySet & { cards: Card[] }) | null> {
     const db = await this.openDB();
     const transaction = db.transaction("studySets", "readonly");
     const store = transaction.objectStore("studySets");
@@ -51,7 +51,7 @@ export class OfflineStorageService {
     });
   }
 
-  async getAllStudySets(): Promise<(Set & { cards: Card[] })[]> {
+  async getAllStudySets(): Promise<(StudySet & { cards: Card[] })[]> {
     const db = await this.openDB();
     const transaction = db.transaction("studySets", "readonly");
     const store = transaction.objectStore("studySets");
