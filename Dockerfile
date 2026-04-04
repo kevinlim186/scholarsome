@@ -30,5 +30,6 @@ RUN apk del g++ make python3
 COPY . .
 COPY --from=builder /usr/src/app/dist ./dist
 COPY --from=builder /usr/src/app/prisma ./prisma
+RUN npx prisma generate
 
 CMD [ "npm", "run", "serve:node" ]
