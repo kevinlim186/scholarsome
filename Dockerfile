@@ -19,10 +19,13 @@ FROM node:lts-alpine3.18 as production
 
 WORKDIR /usr/src/app
 
+RUN apk add --no-cache g++ make python3
+
 COPY package*.json .
 RUN npm install --omit=dev --legacy-peer-deps --ignore-scripts --platform=linuxmusl
 RUN npm rebuild bcrypt --build-from-source
 RUN npm rebuild sharp --build-from-source
+RUN apk del g++ make python3
 
 COPY . .
 COPY --from=builder /usr/src/app/dist ./dist
