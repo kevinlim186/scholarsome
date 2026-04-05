@@ -3,17 +3,18 @@ FROM node:lts-alpine3.18 as builder
 
 WORKDIR /usr/src/app
 
-RUN apk add g++ make py3-pip
+RUN apk add --no-cache g++ make python3
 
 COPY package*.json .
 RUN npm install --legacy-peer-deps --ignore-scripts --platform=linuxmusl
-RUN npm rebuild bcrypt --build-from-source
-RUN npm rebuild sharp --build-from-source
+RUN npm rebuild bcrypt sharp --build-from-source
 
 COPY . .
-RUN node generate-icons.js
-RUN npm run generate
-RUN npm run build
+RUN node generate-icons.js && \
+    npm run generate && \
+    npm run build && \
+    npm prune --omit=dev --legacy-peer-deps && \
+    npm cache clean --force
 
 FROM node:lts-alpine3.18 as production
 
@@ -22,10 +23,10 @@ WORKDIR /usr/src/app
 RUN apk add --no-cache g++ make python3
 
 COPY package*.json .
-RUN npm install --omit=dev --legacy-peer-deps --ignore-scripts --platform=linuxmusl
-RUN npm rebuild bcrypt --build-from-source
-RUN npm rebuild sharp --build-from-source
-RUN apk del g++ make python3
+COPY --from=builder /usr/src/app/node_modules ./node_modules
+RUN npm rebuild bcrypt sharp --build-from-source && \
+    apk del g++ make python3 && \
+    npm cache clean --force
 
 COPY . .
 COPY --from=builder /usr/src/app/dist ./dist
