@@ -266,18 +266,6 @@ export class StudySetFlashcardsComponent implements OnInit {
     return tmp.textContent || tmp.innerText || "";
   }
 
-  async saveForOffline() {
-    if (!this.setId) return;
-    const set = await this.sets.set(this.setId);
-    if (set) {
-      await this.offlineStorage.saveStudySet(set);
-      await this.offlineTTS.downloadVoice(this.termLanguage);
-      await this.offlineTTS.downloadVoice(this.definitionLanguage);
-      this.isSavedOffline = true;
-      alert("Collection saved for offline use!");
-    }
-  }
-
   async speak(text: string, lang: string) {
     this.currentAudio.pause();
 

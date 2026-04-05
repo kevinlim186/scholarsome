@@ -71,9 +71,15 @@
                 title="Available Offline"
               ></fa-icon>
             </h5>
-            <div *ngIf="isSetOffline(set.id)" class="mt-2">
-              <button class="btn btn-sm btn-outline-info" (click)="refreshOfflineSet($event, set.id)">
-                <fa-icon [icon]="faSync"></fa-icon> Refresh Offline
+            <div class="mt-2 d-flex flex-wrap gap-1">
+              <button *ngIf="!isSetOffline(set.id)" class="btn btn-sm btn-primary" (click)="downloadForOffline($event, set.id)">
+                <fa-icon [icon]="faWifi"></fa-icon> Download Offline
+              </button>
+              <button *ngIf="isSetOffline(set.id)" class="btn btn-sm btn-outline-info" (click)="refreshOfflineSet($event, set.id)" title="Refresh offline data">
+                <fa-icon [icon]="faSync"></fa-icon> Refresh
+              </button>
+              <button *ngIf="isSetOffline(set.id)" class="btn btn-sm btn-outline-danger" (click)="removeOffline($event, set.id)" title="Remove offline version">
+                <fa-icon [icon]="['far', 'trash-can']"></fa-icon> Remove
               </button>
             </div>
           </div>

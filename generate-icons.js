@@ -17,11 +17,13 @@ async function generateIcons() {
   // or use just the first letter if it fits better.
   // For this version, we will resize and contain the full logo with padding.
 
+  // Since the logo is text "scholarsome", for a square icon we will
+  // extract a square area or just ensure it is properly contained with padding.
   for (const size of sizes) {
     await sharp(inputSvg)
       .resize(size, size, {
         fit: 'contain',
-        background: { r: 255, g: 255, b: 255, alpha: 1 } // White background for better visibility
+        background: { r: 111, g: 66, b: 193, alpha: 1 } // Brand purple background
       })
       .toFile(path.join(outputDir, `icon-${size}x${size}.png`));
     console.log(`Generated icon-${size}x${size}.png`);

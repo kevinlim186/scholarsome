@@ -27,6 +27,6 @@ export class SettingsComponent implements OnInit {
   }
 
   downloadTTS() {
-    this.ttsService.downloadVoice("en-US");
+    this.ttsService.downloadVoice();
   }
 }

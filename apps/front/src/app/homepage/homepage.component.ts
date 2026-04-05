@@ -62,6 +62,23 @@ export class HomepageComponent implements OnInit {
     this.container.nativeElement.removeAttribute("hidden");
   }
 
+  async downloadForOffline(event: Event, setId: string) {
+    event.stopPropagation();
+    const set = await this.setsService.set(setId);
+    if (set) {
+      await this.offlineStorage.saveStudySet(set);
+      this.offlineSetIds.push(setId);
+      alert("Set downloaded for offline use!");
+    }
+  }
+
+  async removeOffline(event: Event, setId: string) {
+    event.stopPropagation();
+    await this.offlineStorage.deleteStudySet(setId);
+    this.offlineSetIds = this.offlineSetIds.filter(id => id !== setId);
+    alert("Offline version removed.");
+  }
+
   async refreshOfflineSet(event: Event, setId: string) {
     event.stopPropagation();
     const set = await this.setsService.set(setId);
