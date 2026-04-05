@@ -11,12 +11,17 @@ async function generateIcons() {
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });
   }
+
+  // The original SVG is wide. We want to extract a square icon.
+  // Since the logo is text-based, we'll try to center it and add padding,
+  // or use just the first letter if it fits better.
+  // For this version, we will resize and contain the full logo with padding.
+
   for (const size of sizes) {
-    // Generate square icon with padding for better visibility as app icon
     await sharp(inputSvg)
       .resize(size, size, {
         fit: 'contain',
-        background: { r: 255, g: 255, b: 255, alpha: 0 }
+        background: { r: 255, g: 255, b: 255, alpha: 1 } // White background for better visibility
       })
       .toFile(path.join(outputDir, `icon-${size}x${size}.png`));
     console.log(`Generated icon-${size}x${size}.png`);

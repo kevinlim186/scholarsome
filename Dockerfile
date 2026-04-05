@@ -3,11 +3,12 @@ FROM node:lts-alpine3.18 as builder
 
 WORKDIR /usr/src/app
 
+# Install build dependencies and app dependencies in one layer to save space
 RUN apk add --no-cache g++ make python3
-
 COPY package*.json .
-RUN npm install --legacy-peer-deps --ignore-scripts --platform=linuxmusl
-RUN npm rebuild bcrypt sharp --build-from-source
+RUN npm install --legacy-peer-deps --ignore-scripts --platform=linuxmusl && \
+    npm rebuild bcrypt sharp --build-from-source && \
+    npm cache clean --force
 
 COPY . .
 RUN node generate-icons.js && \
@@ -21,9 +22,9 @@ FROM node:lts-alpine3.18 as production
 WORKDIR /usr/src/app
 
 RUN apk add --no-cache g++ make python3
-
 COPY package*.json .
 COPY --from=builder /usr/src/app/node_modules ./node_modules
+# Rebuild native modules in production environment
 RUN npm rebuild bcrypt sharp --build-from-source && \
     apk del g++ make python3 && \
     npm cache clean --force

@@ -281,61 +281,12 @@ export class StudySetFlashcardsComponent implements OnInit {
   async speak(text: string, lang: string) {
     this.currentAudio.pause();
 
-    if (this.isOffline || (this.isSavedOffline && !navigator.onLine)) {
+    try {
       await this.offlineTTS.speak(text, lang);
-      return;
+    } catch (e: any) {
+      console.error(e.message);
+      alert(e.message);
     }
-
-    if (this.useEnhancedTTS) {
-      try {
-        const voiceMap: { [key: string]: string } = {
-          "en-US": "en-US-AndrewNeural",
-          "de-DE": "de-DE-KillianNeural",
-          "es-ES": "es-ES-AlvaroNeural",
-          "fr-FR": "fr-FR-RemyNeural"
-        };
-
-        const voice = voiceMap[lang] || voiceMap["en-US"];
-        const tts = new EdgeTTSBrowser(text, voice);
-        const result = await tts.synthesize();
-        const url = URL.createObjectURL(result.audio);
-
-        this.currentAudio.src = url;
-        await this.currentAudio.play();
-        return;
-      } catch (e) {
-        console.error("Enhanced TTS failed, falling back to system TTS", e);
-      }
-    }
-
-    if (!window.speechSynthesis) {
-      console.warn("Speech synthesis not supported");
-      return;
-    }
-
-    // Cancel any ongoing speech
-    window.speechSynthesis.cancel();
-
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = lang;
-
-    // Try to find a high-quality voice for the language, prioritizing Siri
-    const voices = window.speechSynthesis.getVoices();
-    const siriVoice = voices.find(v => v.lang.startsWith(lang.split("-")[0]) && v.name.includes("Siri"));
-    const premiumVoice = voices.find(v => v.lang.startsWith(lang.split("-")[0]) && (v.name.includes("Premium") || v.name.includes("Enhanced")));
-
-    if (siriVoice) {
-      utterance.voice = siriVoice;
-    } else if (premiumVoice) {
-      utterance.voice = premiumVoice;
-    } else {
-      const standardVoice = voices.find(v => v.lang.startsWith(lang.split("-")[0]));
-      if (standardVoice) {
-        utterance.voice = standardVoice;
-      }
-    }
-
-    window.speechSynthesis.speak(utterance);
   }
 
   toggleAutoplay() {
