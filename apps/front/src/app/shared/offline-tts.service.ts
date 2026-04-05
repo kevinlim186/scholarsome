@@ -1,10 +1,11 @@
-import { Injectable } from "@angular/core";
-import { pipeline } from "@xenova/transformers";
+import { Injectable, EventEmitter } from "@angular/core";
+import { pipeline, env } from "@xenova/transformers";
 
 @Injectable({
   providedIn: "root"
 })
 export class OfflineTTSService {
+  public downloadProgress = new EventEmitter<number>();
   private synthesizer: any = null;
   private isLoaded = false;
   private voiceMap: { [key: string]: string } = {
@@ -19,18 +20,30 @@ export class OfflineTTSService {
   constructor() {}
 
   async downloadVoice(lang: string): Promise<void> {
+    if (this.isLoaded) return;
     console.log(`Downloading high-quality offline voice for ${lang}...`);
+
+    env.allowLocalModels = false;
+
     if (!this.synthesizer) {
-      this.synthesizer = await pipeline("text-to-speech", this.voiceMap[lang] || this.voiceMap["en-US"]);
+      this.synthesizer = await pipeline("text-to-speech", this.voiceMap[lang] || this.voiceMap["en-US"], {
+        progress_callback: (progress: any) => {
+          if (progress.status === "progress") {
+            this.downloadProgress.emit(progress.progress);
+          } else if (progress.status === "done") {
+            this.downloadProgress.emit(100);
+          }
+        }
+      });
     }
     this.isLoaded = true;
   }
 
   async speak(text: string, lang: string): Promise<void> {
-    console.log(`Speaking high-quality offline (${lang}): ${text}`);
     if (!this.isLoaded) {
-      await this.downloadVoice(lang);
+      throw new Error("TTS is not ready. Please download the voice in settings.");
     }
+    console.log(`Speaking high-quality offline (${lang}): ${text}`);
 
     try {
       const output = await this.synthesizer(text, {
@@ -50,16 +63,11 @@ export class OfflineTTSService {
       source.connect(audioContext.destination);
       source.start();
     } catch (e) {
-      console.error("Transformers.js TTS failed, falling back to system TTS", e);
-      if ('speechSynthesis' in window) {
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = lang;
-        window.speechSynthesis.speak(utterance);
-      }
+      console.error("Transformers.js TTS failed", e);
     }
   }
 
-  isOfflineAvailable(lang: string): boolean {
-    return this.isLoaded && !!this.voiceMap[lang];
+  isOfflineAvailable(): boolean {
+    return this.isLoaded;
   }
 }

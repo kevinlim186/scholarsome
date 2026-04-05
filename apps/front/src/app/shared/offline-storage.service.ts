@@ -31,6 +31,10 @@ export class OfflineStorageService {
     const db = await this.openDB();
     const transaction = db.transaction("studySets", "readwrite");
     const store = transaction.objectStore("studySets");
+
+    // Add timestamp for offline management
+    (set as any).offlineSavedAt = new Date().getTime();
+
     store.put(set);
 
     return new Promise((resolve, reject) => {

@@ -12,8 +12,12 @@ async function generateIcons() {
     fs.mkdirSync(outputDir, { recursive: true });
   }
   for (const size of sizes) {
+    // Generate square icon with padding for better visibility as app icon
     await sharp(inputSvg)
-      .resize(size, size)
+      .resize(size, size, {
+        fit: 'contain',
+        background: { r: 255, g: 255, b: 255, alpha: 0 }
+      })
       .toFile(path.join(outputDir, `icon-${size}x${size}.png`));
     console.log(`Generated icon-${size}x${size}.png`);
   }

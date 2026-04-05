@@ -33,5 +33,27 @@
         <scholarsome-change-email-settings></scholarsome-change-email-settings>
       </div>
     </div>
+    <div class="row mt-5 gap-md-3 gap-2 mb-5">
+      <div class="d-flex justify-content-center align-items-center py-3 col-md-3 bg-white shadow-sm">
+        <div class="text-center">
+          <fa-icon [icon]="faMicrophone" class="display-3"></fa-icon>
+          <h1>Text-to-Speech</h1>
+        </div>
+      </div>
+      <div class="col-md-8 bg-white shadow-sm p-3">
+        <div *ngIf="!isTTSReady">
+          <p>Download high-quality voice for offline use.</p>
+          <button class="btn btn-primary" (click)="downloadTTS()" [disabled]="ttsProgress > 0 && ttsProgress < 100">
+            {{ ttsProgress > 0 ? 'Downloading...' : 'Download High-Quality TTS' }}
+          </button>
+          <div class="progress mt-3" *ngIf="ttsProgress > 0">
+            <div class="progress-bar" role="progressbar" [style.width.%]="ttsProgress" [attr.aria-valuenow]="ttsProgress" aria-valuemin="0" aria-valuemax="100">{{ ttsProgress | number:'1.0-0' }}%</div>
+          </div>
+        </div>
+        <div *ngIf="isTTSReady" class="text-success">
+          <p class="fs-4"><fa-icon [icon]="['far', 'check-square']"></fa-icon> High-quality TTS is ready!</p>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

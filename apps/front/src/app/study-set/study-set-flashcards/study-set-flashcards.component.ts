@@ -25,8 +25,8 @@ export class StudySetFlashcardsComponent implements OnInit {
     private readonly titleService: Title,
     private readonly metaService: Meta,
     public readonly sanitizer: DomSanitizer,
-    private readonly offlineStorage: OfflineStorageService,
-    private readonly offlineTTS: OfflineTTSService
+    public readonly offlineStorage: OfflineStorageService,
+    public readonly offlineTTS: OfflineTTSService
   ) {}
 
   @ViewChild("flashcardsConfig") configModal: TemplateRef<HTMLElement>;

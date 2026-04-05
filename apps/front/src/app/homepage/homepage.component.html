@@ -64,7 +64,18 @@
                 *ngIf="set.private"
                 [icon]="['far', 'eye-slash']"
               ></fa-icon>
+              <fa-icon
+                *ngIf="isSetOffline(set.id)"
+                [icon]="faWifi"
+                class="ms-1 text-info fs-6"
+                title="Available Offline"
+              ></fa-icon>
             </h5>
+            <div *ngIf="isSetOffline(set.id)" class="mt-2">
+              <button class="btn btn-sm btn-outline-info" (click)="refreshOfflineSet($event, set.id)">
+                <fa-icon [icon]="faSync"></fa-icon> Refresh Offline
+              </button>
+            </div>
           </div>
           <div class="card-footer mt-auto">
             <small class="text-body-secondary">Updated on {{ set.updatedAt.toLocaleString('en-us', { month:'short', day: 'numeric', year:'numeric'}) }}</small>

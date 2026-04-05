@@ -51,14 +51,11 @@
           </div>
         </div>
         <div class="mb-3" *ngIf="configForm.value['enable-tts'] === 'yes'">
-          <label class="form-label fs-5">Enhanced Reading Model</label>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="enhanced-tts" id="enhanced-yes" value="yes" [ngModel]="useEnhancedTTS ? 'yes' : 'no'" required>
-            <label class="form-check-label" for="enhanced-yes">Yes (Better voices, requires internet)</label>
+          <div *ngIf="!offlineTTS.isOfflineAvailable()" class="alert alert-warning">
+            High-quality TTS is not ready. Please <a routerLink="/settings" class="alert-link">download it in settings</a>.
           </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="enhanced-tts" id="enhanced-no" value="no" [ngModel]="useEnhancedTTS ? 'yes' : 'no'" required>
-            <label class="form-check-label" for="enhanced-no">No (System voices)</label>
+          <div *ngIf="offlineTTS.isOfflineAvailable()" class="text-success mb-2">
+            <fa-icon [icon]="['far', 'check-square']"></fa-icon> High-quality TTS is enabled.
           </div>
         </div>
         <div class="mb-3" *ngIf="configForm.value['enable-tts'] === 'yes'">
