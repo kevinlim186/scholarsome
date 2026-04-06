@@ -52,7 +52,10 @@
             </div>
           </div>
           <div *ngIf="isTTSReadyEN" class="text-success">
-            <p class="fs-5"><fa-icon [icon]="['far', 'check-square']"></fa-icon> English TTS is ready!</p>
+            <p class="fs-5 d-flex align-items-center">
+              <fa-icon [icon]="['far', 'check-square']" class="me-2"></fa-icon> English TTS is ready!
+              <button class="btn btn-sm btn-outline-danger ms-auto" (click)="removeTTS('en-US')">Remove</button>
+            </p>
           </div>
         </div>
         <hr>
@@ -67,7 +70,10 @@
             </div>
           </div>
           <div *ngIf="isTTSReadyDE" class="text-success">
-            <p class="fs-5"><fa-icon [icon]="['far', 'check-square']"></fa-icon> German TTS is ready!</p>
+            <p class="fs-5 d-flex align-items-center">
+              <fa-icon [icon]="['far', 'check-square']" class="me-2"></fa-icon> German TTS is ready!
+              <button class="btn btn-sm btn-outline-danger ms-auto" (click)="removeTTS('de-DE')">Remove</button>
+            </p>
           </div>
         </div>
       </div>

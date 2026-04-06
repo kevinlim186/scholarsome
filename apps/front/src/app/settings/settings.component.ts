@@ -38,4 +38,15 @@ export class SettingsComponent implements OnInit {
   downloadTTS(lang: string) {
     this.ttsService.downloadVoice(lang);
   }
+
+  removeTTS(lang: string) {
+    this.ttsService.removeVoice(lang);
+    if (lang === "en-US") {
+      this.isTTSReadyEN = false;
+      this.ttsProgressEN = 0;
+    } else {
+      this.isTTSReadyDE = false;
+      this.ttsProgressDE = 0;
+    }
+  }
 }

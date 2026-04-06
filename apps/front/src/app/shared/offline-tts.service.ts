@@ -14,7 +14,7 @@ export class OfflineTTSService {
 
   private modelMap: { [key: string]: string } = {
     "en-US": "Xenova/vits-ljs",
-    "de-DE": "Xenova/vits-de-thorsten"
+    "de-DE": "Xenova/mms-tts-deu" // Switched to MMS model which is more reliably accessible
   };
 
   constructor() {}
