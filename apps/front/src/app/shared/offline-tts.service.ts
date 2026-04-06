@@ -5,62 +5,62 @@ import { pipeline, env } from "@xenova/transformers";
   providedIn: "root"
 })
 export class OfflineTTSService {
-  public downloadProgress = new EventEmitter<number>();
-  private synthesizer: any = null;
-  private isLoaded = false;
+  public downloadProgress = new EventEmitter<{ lang: string; progress: number }>();
+  private synthesizers: { [key: string]: any } = {};
+  private loadedLangs: { [key: string]: boolean } = {
+    "en-US": false,
+    "de-DE": false
+  };
 
-  // Use high-quality VITS model for natural speech
-  private modelName = "Xenova/vits-ljs";
+  private modelMap: { [key: string]: string } = {
+    "en-US": "Xenova/vits-ljs",
+    "de-DE": "Xenova/vits-de-thorsten"
+  };
 
-  constructor() {
-    // Check if model is already in cache on init
-    this.checkStatus();
-  }
+  constructor() {}
 
-  private async checkStatus() {
-    // In a real browser, we'd check IndexedDB/Cache API
-    // For now, we rely on the isLoaded flag set after download
-  }
+  async downloadVoice(lang: string): Promise<void> {
+    if (!this.modelMap[lang]) {
+      throw new Error(`Unsupported language: ${lang}. Only en-US and de-DE are supported.`);
+    }
+    if (this.loadedLangs[lang]) return;
 
-  async downloadVoice(): Promise<void> {
-    if (this.isLoaded) return;
-    console.log(`Downloading superior quality offline voice (${this.modelName})...`);
+    console.log(`Downloading high-quality ${lang} voice (${this.modelMap[lang]})...`);
 
     env.allowLocalModels = false;
 
     try {
-      this.synthesizer = await pipeline("text-to-speech", this.modelName, {
+      this.synthesizers[lang] = await pipeline("text-to-speech", this.modelMap[lang], {
         progress_callback: (progress: any) => {
           if (progress.status === "progress") {
-            this.downloadProgress.emit(progress.progress);
+            this.downloadProgress.emit({ lang, progress: progress.progress });
           } else if (progress.status === "done") {
-            this.downloadProgress.emit(100);
+            this.downloadProgress.emit({ lang, progress: 100 });
           }
         }
       });
-      this.isLoaded = true;
+      this.loadedLangs[lang] = true;
     } catch (e) {
-      console.error("Failed to download TTS model", e);
-      this.downloadProgress.emit(-1); // Error state
+      console.error(`Failed to download ${lang} TTS model`, e);
+      this.downloadProgress.emit({ lang, progress: -1 });
     }
   }
 
-  async removeVoice(): Promise<void> {
-    this.synthesizer = null;
-    this.isLoaded = false;
-    this.downloadProgress.emit(0);
-    // In production, we would also clear the Transformers.js cache for this model
-    console.log("Offline voice removed.");
+  async removeVoice(lang: string): Promise<void> {
+    delete this.synthesizers[lang];
+    this.loadedLangs[lang] = false;
+    this.downloadProgress.emit({ lang, progress: 0 });
+    console.log(`Offline ${lang} voice removed.`);
   }
 
   async speak(text: string, lang: string): Promise<void> {
-    if (!this.isLoaded) {
-      throw new Error("Superior TTS is not ready. Please download it in settings.");
+    const synthesizer = this.synthesizers[lang];
+    if (!synthesizer) {
+      throw new Error(`${lang} TTS is not ready. Please download it in settings.`);
     }
 
     try {
-      // VITS models generate high quality audio directly
-      const output = await this.synthesizer(text);
+      const output = await synthesizer(text);
 
       const audioContext = new AudioContext();
       const audioBuffer = audioContext.createBuffer(
@@ -75,11 +75,11 @@ export class OfflineTTSService {
       source.connect(audioContext.destination);
       source.start();
     } catch (e) {
-      console.error("Superior TTS synthesis failed", e);
+      console.error(`${lang} TTS synthesis failed`, e);
     }
   }
 
-  isOfflineAvailable(): boolean {
-    return this.isLoaded;
+  isOfflineAvailable(lang: string): boolean {
+    return this.loadedLangs[lang];
   }
 }

@@ -51,10 +51,10 @@
           </div>
         </div>
         <div class="mb-3" *ngIf="configForm.value['enable-tts'] === 'yes'">
-          <div *ngIf="!offlineTTS.isOfflineAvailable()" class="alert alert-warning">
-            High-quality TTS is not ready. Please <a routerLink="/settings" class="alert-link">download it in settings</a>.
+          <div *ngIf="!offlineTTS.isOfflineAvailable(configForm.value['term-lang']) || !offlineTTS.isOfflineAvailable(configForm.value['definition-lang'])" class="alert alert-warning">
+            High-quality TTS is not ready for selected languages. Please <a routerLink="/settings" class="alert-link">download them in settings</a>.
           </div>
-          <div *ngIf="offlineTTS.isOfflineAvailable()" class="text-success mb-2">
+          <div *ngIf="offlineTTS.isOfflineAvailable(configForm.value['term-lang']) && offlineTTS.isOfflineAvailable(configForm.value['definition-lang'])" class="text-success mb-2">
             <fa-icon [icon]="['far', 'check-square']"></fa-icon> High-quality TTS is enabled.
           </div>
         </div>
@@ -76,8 +76,6 @@
               <select class="form-select" name="term-lang" id="term-lang" [ngModel]="'en-US'" required>
                 <option value="en-US">English (US)</option>
                 <option value="de-DE">German</option>
-                <option value="es-ES">Spanish</option>
-                <option value="fr-FR">French</option>
               </select>
             </div>
             <div class="col">
@@ -85,8 +83,6 @@
               <select class="form-select" name="definition-lang" id="definition-lang" [ngModel]="'de-DE'" required>
                 <option value="en-US">English (US)</option>
                 <option value="de-DE">German</option>
-                <option value="es-ES">Spanish</option>
-                <option value="fr-FR">French</option>
               </select>
             </div>
           </div>

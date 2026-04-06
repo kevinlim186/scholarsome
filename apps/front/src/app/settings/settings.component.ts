@@ -13,20 +13,29 @@ export class SettingsComponent implements OnInit {
   protected readonly faEnvelope = faEnvelope;
   protected readonly faMicrophone = faMicrophone;
 
-  protected ttsProgress = 0;
-  protected isTTSReady = false;
+  protected ttsProgressEN = 0;
+  protected isTTSReadyEN = false;
+  protected ttsProgressDE = 0;
+  protected isTTSReadyDE = false;
 
   constructor(private readonly ttsService: OfflineTTSService) {}
 
   ngOnInit() {
-    this.isTTSReady = this.ttsService.isOfflineAvailable();
-    this.ttsService.downloadProgress.subscribe(progress => {
-      this.ttsProgress = progress;
-      if (progress === 100) this.isTTSReady = true;
+    this.isTTSReadyEN = this.ttsService.isOfflineAvailable("en-US");
+    this.isTTSReadyDE = this.ttsService.isOfflineAvailable("de-DE");
+
+    this.ttsService.downloadProgress.subscribe(data => {
+      if (data.lang === "en-US") {
+        this.ttsProgressEN = data.progress;
+        if (data.progress === 100) this.isTTSReadyEN = true;
+      } else if (data.lang === "de-DE") {
+        this.ttsProgressDE = data.progress;
+        if (data.progress === 100) this.isTTSReadyDE = true;
+      }
     });
   }
 
-  downloadTTS() {
-    this.ttsService.downloadVoice();
+  downloadTTS(lang: string) {
+    this.ttsService.downloadVoice(lang);
   }
 }

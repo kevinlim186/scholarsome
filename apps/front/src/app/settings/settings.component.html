@@ -41,17 +41,34 @@
         </div>
       </div>
       <div class="col-md-8 bg-white shadow-sm p-3">
-        <div *ngIf="!isTTSReady">
-          <p>Download high-quality voice for offline use.</p>
-          <button class="btn btn-primary" (click)="downloadTTS()" [disabled]="ttsProgress > 0 && ttsProgress < 100">
-            {{ ttsProgress > 0 ? 'Downloading...' : 'Download High-Quality TTS' }}
-          </button>
-          <div class="progress mt-3" *ngIf="ttsProgress > 0">
-            <div class="progress-bar" role="progressbar" [style.width.%]="ttsProgress" [attr.aria-valuenow]="ttsProgress" aria-valuemin="0" aria-valuemax="100">{{ ttsProgress | number:'1.0-0' }}%</div>
+        <div class="mb-4">
+          <h5>English (US) Voice</h5>
+          <div *ngIf="!isTTSReadyEN">
+            <button class="btn btn-primary" (click)="downloadTTS('en-US')" [disabled]="ttsProgressEN > 0 && ttsProgressEN < 100">
+              {{ ttsProgressEN > 0 ? 'Downloading...' : 'Download English TTS' }}
+            </button>
+            <div class="progress mt-3" *ngIf="ttsProgressEN > 0">
+              <div class="progress-bar" role="progressbar" [style.width.%]="ttsProgressEN" [attr.aria-valuenow]="ttsProgressEN" aria-valuemin="0" aria-valuemax="100">{{ ttsProgressEN | number:'1.0-0' }}%</div>
+            </div>
+          </div>
+          <div *ngIf="isTTSReadyEN" class="text-success">
+            <p class="fs-5"><fa-icon [icon]="['far', 'check-square']"></fa-icon> English TTS is ready!</p>
           </div>
         </div>
-        <div *ngIf="isTTSReady" class="text-success">
-          <p class="fs-4"><fa-icon [icon]="['far', 'check-square']"></fa-icon> High-quality TTS is ready!</p>
+        <hr>
+        <div>
+          <h5>German Voice</h5>
+          <div *ngIf="!isTTSReadyDE">
+            <button class="btn btn-primary" (click)="downloadTTS('de-DE')" [disabled]="ttsProgressDE > 0 && ttsProgressDE < 100">
+              {{ ttsProgressDE > 0 ? 'Downloading...' : 'Download German TTS' }}
+            </button>
+            <div class="progress mt-3" *ngIf="ttsProgressDE > 0">
+              <div class="progress-bar" role="progressbar" [style.width.%]="ttsProgressDE" [attr.aria-valuenow]="ttsProgressDE" aria-valuemin="0" aria-valuemax="100">{{ ttsProgressDE | number:'1.0-0' }}%</div>
+            </div>
+          </div>
+          <div *ngIf="isTTSReadyDE" class="text-success">
+            <p class="fs-5"><fa-icon [icon]="['far', 'check-square']"></fa-icon> German TTS is ready!</p>
+          </div>
         </div>
       </div>
     </div>
