@@ -14,10 +14,23 @@ export class OfflineTTSService {
 
   private modelMap: { [key: string]: string } = {
     "en-US": "Xenova/vits-ljs",
-    "de-DE": "Xenova/mms-tts-deu" // Switched to MMS model which is more reliably accessible
+    "de-DE": "Xenova/mms-tts-deu"
   };
 
-  constructor() {}
+  private hfToken: string | null = null;
+
+  constructor() {
+    this.hfToken = localStorage.getItem("HF_TOKEN");
+  }
+
+  setToken(token: string) {
+    this.hfToken = token;
+    localStorage.setItem("HF_TOKEN", token);
+  }
+
+  getToken(): string | null {
+    return this.hfToken;
+  }
 
   async downloadVoice(lang: string): Promise<void> {
     if (!this.modelMap[lang]) {
@@ -29,20 +42,41 @@ export class OfflineTTSService {
 
     env.allowLocalModels = false;
 
-    try {
-      this.synthesizers[lang] = await pipeline("text-to-speech", this.modelMap[lang], {
-        progress_callback: (progress: any) => {
-          if (progress.status === "progress") {
-            this.downloadProgress.emit({ lang, progress: progress.progress });
-          } else if (progress.status === "done") {
-            this.downloadProgress.emit({ lang, progress: 100 });
-          }
+    const options: any = {
+      progress_callback: (progress: any) => {
+        if (progress.status === "progress") {
+          this.downloadProgress.emit({ lang, progress: progress.progress });
+        } else if (progress.status === "done") {
+          this.downloadProgress.emit({ lang, progress: 100 });
         }
-      });
+      }
+    };
+
+    if (this.hfToken) {
+      // Transformers.js uses the fetch API, which respects headers.
+      // We can pass the token via env configuration or custom fetch.
+      (env as any).remoteHost = `https://huggingface.co`;
+      (env as any).remotePathTemplate = `{model}/resolve/{revision}/{file}`;
+
+      // Note: Passing token directly to fetch for private repo access
+      const originalFetch = window.fetch;
+      window.fetch = (input, init) => {
+        if (typeof input === 'string' && input.includes('huggingface.co')) {
+          init = init || {};
+          init.headers = init.headers || {};
+          (init.headers as any)['Authorization'] = `Bearer ${this.hfToken}`;
+        }
+        return originalFetch(input, init);
+      };
+    }
+
+    try {
+      this.synthesizers[lang] = await pipeline("text-to-speech", this.modelMap[lang], options);
       this.loadedLangs[lang] = true;
-    } catch (e) {
+    } catch (e: any) {
       console.error(`Failed to download ${lang} TTS model`, e);
       this.downloadProgress.emit({ lang, progress: -1 });
+      throw e;
     }
   }
 

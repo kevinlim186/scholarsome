@@ -17,10 +17,12 @@ export class SettingsComponent implements OnInit {
   protected isTTSReadyEN = false;
   protected ttsProgressDE = 0;
   protected isTTSReadyDE = false;
+  protected hfToken = "";
 
-  constructor(private readonly ttsService: OfflineTTSService) {}
+  constructor(public readonly ttsService: OfflineTTSService) {}
 
   ngOnInit() {
+    this.hfToken = this.ttsService.getToken() || "";
     this.isTTSReadyEN = this.ttsService.isOfflineAvailable("en-US");
     this.isTTSReadyDE = this.ttsService.isOfflineAvailable("de-DE");
 
@@ -35,8 +37,15 @@ export class SettingsComponent implements OnInit {
     });
   }
 
+  saveToken() {
+    this.ttsService.setToken(this.hfToken);
+    alert("Hugging Face token saved!");
+  }
+
   downloadTTS(lang: string) {
-    this.ttsService.downloadVoice(lang);
+    this.ttsService.downloadVoice(lang).catch(e => {
+      alert(`Error: ${e.message}. If the model is restricted, please ensure your Hugging Face token is correct.`);
+    });
   }
 
   removeTTS(lang: string) {

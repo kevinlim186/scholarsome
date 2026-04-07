@@ -42,6 +42,15 @@
       </div>
       <div class="col-md-8 bg-white shadow-sm p-3">
         <div class="mb-4">
+          <h5>Hugging Face Authentication</h5>
+          <p class="text-secondary small">Required for accessing restricted or high-quality models.</p>
+          <div class="input-group mb-3">
+            <input type="password" class="form-control" placeholder="Enter HF_TOKEN" [(ngModel)]="hfToken">
+            <button class="btn btn-outline-primary" type="button" (click)='saveToken()'>Save Token</button>
+          </div>
+        </div>
+        <hr>
+        <div class="mb-4">
           <h5>English (US) Voice</h5>
           <div *ngIf="!isTTSReadyEN">
             <button class="btn btn-primary" (click)="downloadTTS('en-US')" [disabled]="ttsProgressEN > 0 && ttsProgressEN < 100">
