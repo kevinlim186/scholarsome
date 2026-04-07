@@ -1,0 +1,174 @@
+
+> scholarsome@1.2.0 build
+> npx nx run-many --target=build --projects=front,api,docs --skip-nx-cache
+
+
+ NX   --skip-nx-cache disables the connection to Nx Cloud for the current run.
+
+The remote cache will not be read from or written to during this run.
+
+
+ NX   Running target build for 3 projects:
+
+- front
+- api
+- docs
+
+
+
+> nx run api:build
+
+[1m[33mOption "isolatedConfig" is deprecated: Automatic configuration of Webpack is deprecated in favor of an explicit 'webpack.config.js' file. This option will be removed in Nx 19. See https://nx.dev/recipes/webpack/webpack-config-setup.[39m[22m
+chunk (runtime: main) [1m[32mmain.js[39m[22m (main) 310 KiB [1m[33m[entry][39m[22m [1m[32m[rendered][39m[22m
+webpack compiled [1m[32msuccessfully[39m[22m (72ffc7d0cca4c8bd)
+
+> nx run docs:build
+
+(node:122840) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[36m[1m[INFO][22m[39m [34m[1m[en][22m[39m Creating an optimized production build...
+[36mℹ[39m Compiling Client
+[36mℹ[39m Compiling Server
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+[32m✔[39m Client: Compiled successfully in 41.54s
+[32m✔[39m Server: Compiled successfully in 46.13s
+[36m[1m[INFO][22m[39m Docusaurus found broken links!
+
+Please check the pages of your site in the list below, and make sure you don't reference any path that does not exist.
+Note: it's possible to ignore broken links with the 'onBrokenLinks' Docusaurus configuration, and let the build pass.
+
+It looks like some of the broken links we found appear in many pages of your site.
+Maybe those broken links appear on all pages through your site layout?
+We recommend that you check your theme configuration for such links (particularly, theme navbar and footer).
+Frequent broken links are linking to:
+- /handbook/api/
+
+Exhaustive list of all broken links found:
+
+- On source page path = /handbook/404.html:
+   -> linking to /handbook/api/
+
+- On source page path = /handbook/:
+   -> linking to /handbook/api/
+
+- On source page path = /handbook/development/development-guide/:
+   -> linking to /handbook/api/
+
+- On source page path = /handbook/installation/installing/:
+   -> linking to /handbook/api/
+
+- On source page path = /handbook/installation/prerequisites/:
+   -> linking to /handbook/api/
+
+- On source page path = /handbook/project-information/about/:
+   -> linking to /handbook/api/
+
+- On source page path = /handbook/usage/flashcards/:
+   -> linking to /handbook/api/
+
+- On source page path = /handbook/usage/folders/creating-folders/:
+   -> linking to /handbook/api/
+
+- On source page path = /handbook/usage/overview/:
+   -> linking to /handbook/api/
+
+- On source page path = /handbook/usage/quizzes/:
+   -> linking to /handbook/api/
+
+- On source page path = /handbook/usage/sets/creating-sets/:
+   -> linking to /handbook/api/
+
+- On source page path = /handbook/usage/sets/exporting-sets/:
+   -> linking to /handbook/api/
+
+- On source page path = /handbook/usage/sets/importing-sets/:
+   -> linking to /handbook/api/
+
+- On source page path = /handbook/usage/sets/sharing-sets/:
+   -> linking to /handbook/api/
+
+[32m[1m[SUCCESS][22m[39m Generated static files in [36m[4m"dist/apps/docs"[24m[39m.
+[36m[1m[INFO][22m[39m Use [36m`npm run serve`[39m command to test your build locally.
+
+> nx run front:build:production
+
+@ngx-env/builder using prefix SCHOLARSOME_
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+- Generating browser application bundles (phase: setup)...
+[1m[33m    TypeScript compiler options "target" and "useDefineForClassFields" are set to "ES2022" and "false" respectively by the Angular CLI. To control ECMA version and features use the Browerslist configuration. For more information, see https://angular.io/guide/build#configuring-browser-compatibility[39m[22m
+[1m[33m    NOTE: You can set the "target" to "ES2022" in the project's tsconfig to remove this warning.[39m[22m
+[32m✔[39m Browser application bundle generation complete.
+[32m✔[39m Browser application bundle generation complete.
+[1m[33m[39m[22m
+[1m[33m[0m[33mWarning: [39m[33m[0m/app/apps/front/src/app/app.module.ts depends on 'quill'. CommonJS or AMD dependencies can cause optimization bailouts.[39m[22m
+[1m[33mFor more info see: https://angular.io/guide/build#configuring-commonjs-dependencies[39m[22m
+[1m[33m[39m[22m
+[1m[33m[0m[33mWarning: [39m[33m[0m/app/apps/front/src/app/app.module.ts depends on 'quill-image-resize-module'. CommonJS or AMD dependencies can cause optimization bailouts.[39m[22m
+[1m[33mFor more info see: https://angular.io/guide/build#configuring-commonjs-dependencies[39m[22m
+[1m[33m[39m[22m
+[1m[33m[0m[33mWarning: [39m[33m[0m/app/apps/front/src/app/study-set/study-set-quiz/study-set-quiz.component.ts depends on 'string-similarity'. CommonJS or AMD dependencies can cause optimization bailouts.[39m[22m
+[1m[33mFor more info see: https://angular.io/guide/build#configuring-commonjs-dependencies[39m[22m
+[1m[33m[39m[22m
+[1m[33m[0m[33mWarning: [39m[33m[0m/app/libs/shared/src/lib/types/api/envSchema.ts depends on 'joi'. CommonJS or AMD dependencies can cause optimization bailouts.[39m[22m
+[1m[33mFor more info see: https://angular.io/guide/build#configuring-commonjs-dependencies[39m[22m
+[1m[33m[39m[22m
+[1m[33m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[0m[36m./apps/front/src/app/app.module.ts[39m[31m[0m:[0m[93m34:0-62[39m[31m[0m - [0m[91mError: [39m[31m[0mModule not found: Error: Can't resolve '@angular/service-worker' in '/app/apps/front/src/app'[39m[22m
+[1m[31m[39m[22m
+[1m[31m[0m[91mError: [39m[31m[0m[96mapps/front/src/app/app.component.html[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m NG8001: [0m'scholarsome-header' is not a known element:[39m[22m
+[1m[31m1. If 'scholarsome-header' is an Angular component, then verify that it is part of this module.[39m[22m
+[1m[31m2. If 'scholarsome-header' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@NgModule.schemas' of this component to suppress this message.[39m[22m
+[1m[31m[39m[22m
+[1m[31m[7m1[0m <scholarsome-header></scholarsome-header>[39m[22m
+[1m[31m[7m [0m [91m~~~~~~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m  [96mapps/front/src/app/app.component.ts[0m:[93m7[0m:[93m16[0m[39m[22m
+[1m[31m    [7m7[0m   templateUrl: "./app.component.html"[39m[22m
+[1m[31m    [7m [0m [96m               ~~~~~~~~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m    Error occurs in the template of component AppComponent.[39m[22m
+[1m[31m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[0m[91mError: [39m[31m[0m[96mapps/front/src/app/app.component.html[0m:[93m2[0m:[93m1[0m - [91merror[0m[90m NG8001: [0m'router-outlet' is not a known element:[39m[22m
+[1m[31m1. If 'router-outlet' is an Angular component, then verify that it is part of this module.[39m[22m
+[1m[31m2. If 'router-outlet' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@NgModule.schemas' of this component to suppress this message.[39m[22m
+[1m[31m[39m[22m
+[1m[31m[7m2[0m <router-outlet></router-outlet>[39m[22m
+[1m[31m[7m [0m [91m~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m  [96mapps/front/src/app/app.component.ts[0m:[93m7[0m:[93m16[0m[39m[22m
+[1m[31m    [7m7[0m   templateUrl: "./app.component.html"[39m[22m
+[1m[31m    [7m [0m [96m               ~~~~~~~~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m    Error occurs in the template of component AppComponent.[39m[22m
+[1m[31m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[0m[91mError: [39m[31m[0m[96mapps/front/src/app/app.module.ts[0m:[93m58[0m:[93m37[0m - [91merror[0m[90m TS2307: [0mCannot find module '@angular/service-worker' or its corresponding type declarations.[39m[22m
+[1m[31m[39m[22m
+[1m[31m[7m58[0m import { ServiceWorkerModule } from "@angular/service-worker";[39m[22m
+[1m[31m[7m  [0m [91m         [39m[22m[1m[31m                           ~~~~~~~~~~~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[0m[91mError: [39m[31m[0m[96mapps/front/src/app/app.module.ts[0m:[93m63[0m:[93m12[0m - [91merror[0m[90m NG1010: [0mValue[39m[22m
+[1m[31m[39m[22m
+[1m[31m[0m[91mError: [39m[31m[0m[96mapps/front/src/app/shared/offline-storage.service.ts[0m:[93m3[0m:[93m16[0m - [91merror[0m[90m TS2305: [0mModule '"@scholarsome/shared"' has no exported member 'StudySet'.[39m[22m
+[1m[31m[39m[22m
+[1m[31m[7m3[0m import { User, StudySet } from "@scholarsome/shared";[39m[22m
+[1m[31m[7m [0m [91m               ~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[39m[22m
+
+
+
+ NX   Running target build for 3 projects failed
+
+Failed tasks:
+
+- front:build:production

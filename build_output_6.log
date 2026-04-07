@@ -1,0 +1,149 @@
+
+> scholarsome@1.2.0 build
+> npx nx run-many --target=build --projects=front,api,docs --skip-nx-cache
+
+
+ NX   --skip-nx-cache disables the connection to Nx Cloud for the current run.
+
+The remote cache will not be read from or written to during this run.
+
+
+ NX   Running target build for 3 projects:
+
+- front
+- api
+- docs
+
+
+
+> nx run docs:build
+
+(node:540957) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[36m[1m[INFO][22m[39m [34m[1m[en][22m[39m Creating an optimized production build...
+[36mℹ[39m Compiling Client
+[36mℹ[39m Compiling Server
+[32m✔[39m Client: Compiled successfully in 5.02s
+[32m✔[39m Server: Compiled successfully in 7.18s
+[36m[1m[INFO][22m[39m Docusaurus found broken links!
+
+Please check the pages of your site in the list below, and make sure you don't reference any path that does not exist.
+Note: it's possible to ignore broken links with the 'onBrokenLinks' Docusaurus configuration, and let the build pass.
+
+It looks like some of the broken links we found appear in many pages of your site.
+Maybe those broken links appear on all pages through your site layout?
+We recommend that you check your theme configuration for such links (particularly, theme navbar and footer).
+Frequent broken links are linking to:
+- /handbook/api/
+
+Exhaustive list of all broken links found:
+
+- On source page path = /handbook/404.html:
+   -> linking to /handbook/api/
+
+- On source page path = /handbook/:
+   -> linking to /handbook/api/
+
+- On source page path = /handbook/development/development-guide/:
+   -> linking to /handbook/api/
+
+- On source page path = /handbook/installation/installing/:
+   -> linking to /handbook/api/
+
+- On source page path = /handbook/installation/prerequisites/:
+   -> linking to /handbook/api/
+
+- On source page path = /handbook/project-information/about/:
+   -> linking to /handbook/api/
+
+- On source page path = /handbook/usage/flashcards/:
+   -> linking to /handbook/api/
+
+- On source page path = /handbook/usage/folders/creating-folders/:
+   -> linking to /handbook/api/
+
+- On source page path = /handbook/usage/overview/:
+   -> linking to /handbook/api/
+
+- On source page path = /handbook/usage/quizzes/:
+   -> linking to /handbook/api/
+
+- On source page path = /handbook/usage/sets/creating-sets/:
+   -> linking to /handbook/api/
+
+- On source page path = /handbook/usage/sets/exporting-sets/:
+   -> linking to /handbook/api/
+
+- On source page path = /handbook/usage/sets/importing-sets/:
+   -> linking to /handbook/api/
+
+- On source page path = /handbook/usage/sets/sharing-sets/:
+   -> linking to /handbook/api/
+
+[32m[1m[SUCCESS][22m[39m Generated static files in [36m[4m"dist/apps/docs"[24m[39m.
+[36m[1m[INFO][22m[39m Use [36m`npm run serve`[39m command to test your build locally.
+
+> nx run api:build
+
+[1m[33mOption "isolatedConfig" is deprecated: Automatic configuration of Webpack is deprecated in favor of an explicit 'webpack.config.js' file. This option will be removed in Nx 19. See https://nx.dev/recipes/webpack/webpack-config-setup.[39m[22m
+chunk (runtime: main) [1m[32mmain.js[39m[22m (main) 310 KiB [1m[33m[entry][39m[22m [1m[32m[rendered][39m[22m
+webpack compiled [1m[32msuccessfully[39m[22m (72ffc7d0cca4c8bd)
+
+> nx run front:build:production
+
+@ngx-env/builder using prefix SCHOLARSOME_
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+- Generating browser application bundles (phase: setup)...
+[1m[33m    TypeScript compiler options "target" and "useDefineForClassFields" are set to "ES2022" and "false" respectively by the Angular CLI. To control ECMA version and features use the Browerslist configuration. For more information, see https://angular.io/guide/build#configuring-browser-compatibility[39m[22m
+[1m[33m    NOTE: You can set the "target" to "ES2022" in the project's tsconfig to remove this warning.[39m[22m
+[32m✔[39m Browser application bundle generation complete.
+[32m✔[39m Browser application bundle generation complete.
+[37m[39m
+[37m[0m[1mInitial Chunk Files[22m          [2m | [22m[1mNames[22m                     [2m | [22m [1mRaw Size[22m[2m | [22m[1mEstimated Transfer Size[22m[0m[39m
+[37m[0m[92mmain.f9a20ebe7407ebfc.js[39m[37m     [2m | [22mmain                      [2m | [22m  [96m1.93 MB[39m[37m[2m | [22m              [96m438.88 kB[39m[37m[0m[39m
+[37m[0m[92mscripts.3b31e7650426a8dc.js[39m[37m  [2m | [22mscripts                   [2m | [22m[96m555.30 kB[39m[37m[2m | [22m              [96m123.67 kB[39m[37m[0m[39m
+[37m[0m[92mstyles.581fddea99063fe6.css[39m[37m  [2m | [22mstyles                    [2m | [22m[96m242.82 kB[39m[37m[2m | [22m               [96m25.81 kB[39m[37m[0m[39m
+[37m[0m[92mpolyfills.731af29a9e8fa882.js[39m[37m[2m | [22mpolyfills                 [2m | [22m [96m43.09 kB[39m[37m[2m | [22m               [96m13.31 kB[39m[37m[0m[39m
+[37m[0m[92mruntime.fbcb691ef258373d.js[39m[37m  [2m | [22mruntime                   [2m | [22m  [96m3.20 kB[39m[37m[2m | [22m                [96m1.50 kB[39m[37m[0m[39m
+[37m[0m[0m[39m
+[37m[0m[1m [22m                            [2m | [22m[1mInitial Total[22m             [2m | [22m  [1m[91m2.75 MB[39m[37m[22m[2m | [22m              [1m603.17 kB[22m[0m[39m
+[37m[0m[0m[39m
+[37m[0m[1mLazy Chunk Files[22m             [2m | [22m[1mNames[22m                     [2m | [22m [1mRaw Size[22m[2m | [22m[1mEstimated Transfer Size[22m[0m[39m
+[37m[0m[92m14.c55c9916517ae02c.js[39m[37m       [2m | [22mstudy-set-study-set-module[2m | [22m [96m71.11 kB[39m[37m[2m | [22m               [96m15.80 kB[39m[37m[0m[39m
+[37m[0m[92mcommon.068324d236443b85.js[39m[37m   [2m | [22mcommon                    [2m | [22m  [96m8.11 kB[39m[37m[2m | [22m                [96m2.63 kB[39m[37m[0m[39m
+[37m[0m[92m634.8c33c6b4f3a5c474.js[39m[37m      [2m | [22mhomepage-homepage-module  [2m | [22m[96m628 bytes[39m[37m[2m | [22m              [96m310 bytes[39m[37m[0m[39m
+[37m[0m[0m[39m
+[37m[0mBuild at: [1m[37m2026-04-05T07:09:54.097Z[39m[37m[22m - Hash: [1m[37m19b921031c74ef2c[39m[37m[22m - Time: [1m[37m17574[39m[37m[22mms[0m[39m
+[1m[33m[39m[22m
+[1m[33m[0m[33mWarning: [39m[33m[0m/app/apps/front/src/app/app.module.ts depends on 'quill'. CommonJS or AMD dependencies can cause optimization bailouts.[39m[22m
+[1m[33mFor more info see: https://angular.io/guide/build#configuring-commonjs-dependencies[39m[22m
+[1m[33m[39m[22m
+[1m[33m[0m[33mWarning: [39m[33m[0m/app/apps/front/src/app/app.module.ts depends on 'quill-image-resize-module'. CommonJS or AMD dependencies can cause optimization bailouts.[39m[22m
+[1m[33mFor more info see: https://angular.io/guide/build#configuring-commonjs-dependencies[39m[22m
+[1m[33m[39m[22m
+[1m[33m[0m[33mWarning: [39m[33m[0m/app/apps/front/src/app/study-set/study-set-quiz/study-set-quiz.component.ts depends on 'string-similarity'. CommonJS or AMD dependencies can cause optimization bailouts.[39m[22m
+[1m[33mFor more info see: https://angular.io/guide/build#configuring-commonjs-dependencies[39m[22m
+[1m[33m[39m[22m
+[1m[33m[0m[33mWarning: [39m[33m[0m/app/libs/shared/src/lib/types/api/envSchema.ts depends on 'joi'. CommonJS or AMD dependencies can cause optimization bailouts.[39m[22m
+[1m[33mFor more info see: https://angular.io/guide/build#configuring-commonjs-dependencies[39m[22m
+[1m[33m[39m[22m
+[1m[33m[0m[33mWarning: [39m[33m[0m/app/node_modules/@xenova/transformers/src/backends/onnx.js depends on 'onnxruntime-web'. CommonJS or AMD dependencies can cause optimization bailouts.[39m[22m
+[1m[33mFor more info see: https://angular.io/guide/build#configuring-commonjs-dependencies[39m[22m
+[1m[33m[39m[22m
+[1m[33m[0m[33mWarning: [39m[33m[0mbundle initial exceeded maximum budget. Budget 2.00 MB was not met by 768.77 kB with a total of 2.75 MB.[39m[22m
+[1m[33m[39m[22m
+[1m[33m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[0m[91mError: [39m[31m[0mbundle initial exceeded maximum budget. Budget 2.00 MB was not met by 768.77 kB with a total of 2.75 MB.[39m[22m
+[1m[31m[39m[22m
+[1m[31m[39m[22m
+
+
+
+ NX   Running target build for 3 projects failed
+
+Failed tasks:
+
+- front:build:production

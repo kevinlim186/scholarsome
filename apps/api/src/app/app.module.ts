@@ -70,7 +70,15 @@ import { TasksService } from "./providers/tasks.service";
           host: configService.get<string>("REDIS_HOST"),
           port: configService.get<number>("REDIS_PORT"),
           username: configService.get<string>("REDIS_USERNAME"),
-          password: configService.get<string>("REDIS_PASSWORD")
+          password: configService.get<string>("REDIS_PASSWORD"),
+          retryStrategy(times) {
+            return Math.min(times * 100, 3000);
+          }
+        },
+        onClientCreated(client) {
+          client.on("error", (err) => {
+            console.error(`[Redis] Error: ${err.message}`);
+          });
         },
         config: [
           {

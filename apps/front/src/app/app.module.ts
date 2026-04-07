@@ -55,6 +55,7 @@ const Quill: any = QuillNamespace;
 import ImageResize from "quill-image-resize-module";
 import { SharedService } from "./shared/shared.service";
 import { FolderModule } from "./folder/folder.module";
+import { ServiceWorkerModule } from "@angular/service-worker";
 Quill.register("modules/imageResize", ImageResize);
 
 @NgModule({
@@ -65,6 +66,12 @@ Quill.register("modules/imageResize", ImageResize);
     BrowserModule,
     HttpClientModule,
     SharedModule,
+    ServiceWorkerModule.register("ngsw-worker.js", {
+      enabled: process.env["NG_APP_ENV"] !== "development",
+      // Register the ServiceWorker as soon as the application is stable
+      // or after 30 seconds (whichever comes first).
+      registrationStrategy: "registerWhenStable:30000"
+    }),
     FontAwesomeModule,
     ModalModule.forRoot(),
     CookieModule.withOptions(),

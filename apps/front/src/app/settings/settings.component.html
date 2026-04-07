@@ -33,5 +33,59 @@
         <scholarsome-change-email-settings></scholarsome-change-email-settings>
       </div>
     </div>
+    <div class="row mt-5 gap-md-3 gap-2 mb-5">
+      <div class="d-flex justify-content-center align-items-center py-3 col-md-3 bg-white shadow-sm">
+        <div class="text-center">
+          <fa-icon [icon]="faMicrophone" class="display-3"></fa-icon>
+          <h1>Text-to-Speech</h1>
+        </div>
+      </div>
+      <div class="col-md-8 bg-white shadow-sm p-3">
+        <div class="mb-4">
+          <h5>Hugging Face Authentication</h5>
+          <p class="text-secondary small">Required for accessing restricted or high-quality models.</p>
+          <div class="input-group mb-3">
+            <input type="password" class="form-control" placeholder="Enter HF_TOKEN" [(ngModel)]="hfToken">
+            <button class="btn btn-outline-primary" type="button" (click)='saveToken()'>Save Token</button>
+          </div>
+        </div>
+        <hr>
+        <div class="mb-4">
+          <h5>English (US) Voice</h5>
+          <div *ngIf="!isTTSReadyEN">
+            <button class="btn btn-primary" (click)="downloadTTS('en-US')" [disabled]="ttsProgressEN > 0 && ttsProgressEN < 100">
+              {{ ttsProgressEN > 0 ? 'Downloading...' : 'Download English TTS' }}
+            </button>
+            <div class="progress mt-3" *ngIf="ttsProgressEN > 0">
+              <div class="progress-bar" role="progressbar" [style.width.%]="ttsProgressEN" [attr.aria-valuenow]="ttsProgressEN" aria-valuemin="0" aria-valuemax="100">{{ ttsProgressEN | number:'1.0-0' }}%</div>
+            </div>
+          </div>
+          <div *ngIf="isTTSReadyEN" class="text-success">
+            <p class="fs-5 d-flex align-items-center">
+              <fa-icon [icon]="['far', 'check-square']" class="me-2"></fa-icon> English TTS is ready!
+              <button class="btn btn-sm btn-outline-danger ms-auto" (click)="removeTTS('en-US')">Remove</button>
+            </p>
+          </div>
+        </div>
+        <hr>
+        <div>
+          <h5>German Voice</h5>
+          <div *ngIf="!isTTSReadyDE">
+            <button class="btn btn-primary" (click)="downloadTTS('de-DE')" [disabled]="ttsProgressDE > 0 && ttsProgressDE < 100">
+              {{ ttsProgressDE > 0 ? 'Downloading...' : 'Download German TTS' }}
+            </button>
+            <div class="progress mt-3" *ngIf="ttsProgressDE > 0">
+              <div class="progress-bar" role="progressbar" [style.width.%]="ttsProgressDE" [attr.aria-valuenow]="ttsProgressDE" aria-valuemin="0" aria-valuemax="100">{{ ttsProgressDE | number:'1.0-0' }}%</div>
+            </div>
+          </div>
+          <div *ngIf="isTTSReadyDE" class="text-success">
+            <p class="fs-5 d-flex align-items-center">
+              <fa-icon [icon]="['far', 'check-square']" class="me-2"></fa-icon> German TTS is ready!
+              <button class="btn btn-sm btn-outline-danger ms-auto" (click)="removeTTS('de-DE')">Remove</button>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

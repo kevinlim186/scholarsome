@@ -17,6 +17,7 @@
         "tsConfig": "apps/front/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
+          "apps/front/src/manifest.webmanifest",
           "apps/front/src/favicon.ico",
           "apps/front/src/assets",
           "apps/front/src/robots.txt",
@@ -37,8 +38,11 @@
         },
         "allowedCommonJsDependencies": ["@prisma/client", "validator"]
       },
+            "serviceWorker": true,
+            "ngswConfigPath": "apps/front/ngsw-config.json",
       "configurations": {
         "production": {
+          "serviceWorker": true,
           "buildOptimizer": true,
           "optimization": {
             "scripts": true,
@@ -53,8 +57,8 @@
           "budgets": [
             {
               "type": "initial",
-              "maximumWarning": "2mb",
-              "maximumError": "2mb"
+              "maximumWarning": "4mb",
+              "maximumError": "4mb"
             },
             {
               "type": "anyComponentStyle",
@@ -77,8 +81,11 @@
     },
     "serve": {
       "executor": "@ngx-env/builder:dev-server",
+            "serviceWorker": true,
+            "ngswConfigPath": "apps/front/ngsw-config.json",
       "configurations": {
         "production": {
+          "serviceWorker": true,
           "browserTarget": "front:build:production"
         },
         "development": {

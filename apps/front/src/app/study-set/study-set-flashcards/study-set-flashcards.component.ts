@@ -6,8 +6,11 @@ import { BsModalRef } from "ngx-bootstrap/modal";
 import { faThumbsUp, faCake, faVolumeUp, faPlay, faPause } from "@fortawesome/free-solid-svg-icons";
 import { DomSanitizer, Meta, Title } from "@angular/platform-browser";
 import { NgForm } from "@angular/forms";
-import { faQuestionCircle } from "@fortawesome/free-regular-svg-icons";
+import { faQuestionCircle, faSave } from "@fortawesome/free-regular-svg-icons";
 import { EdgeTTSBrowser } from "edge-tts-universal";
+import { OfflineStorageService } from "../../shared/offline-storage.service";
+import { OfflineTTSService } from "../../shared/offline-tts.service";
+import { Set as StudySet } from "@scholarsome/shared";
 
 @Component({
   selector: "scholarsome-study-set-flashcards",
@@ -21,7 +24,9 @@ export class StudySetFlashcardsComponent implements OnInit {
     private readonly router: Router,
     private readonly titleService: Title,
     private readonly metaService: Meta,
-    public readonly sanitizer: DomSanitizer
+    public readonly sanitizer: DomSanitizer,
+    public readonly offlineStorage: OfflineStorageService,
+    public readonly offlineTTS: OfflineTTSService
   ) {}
 
   @ViewChild("flashcardsConfig") configModal: TemplateRef<HTMLElement>;
@@ -65,11 +70,14 @@ export class StudySetFlashcardsComponent implements OnInit {
   protected termLanguage = "en-US";
   protected definitionLanguage = "de-DE";
   protected useEnhancedTTS = true;
+  protected isOffline = !navigator.onLine;
+  protected isSavedOffline = false;
 
   private currentAudio = new Audio();
 
   protected modalRef?: BsModalRef;
   protected readonly faThumbsUp = faThumbsUp;
+  protected readonly faSave = faSave;
   protected readonly faCake = faCake;
   protected readonly faVolumeUp = faVolumeUp;
   protected readonly faPlay = faPlay;
@@ -261,56 +269,12 @@ export class StudySetFlashcardsComponent implements OnInit {
   async speak(text: string, lang: string) {
     this.currentAudio.pause();
 
-    if (this.useEnhancedTTS) {
-      try {
-        const voiceMap: { [key: string]: string } = {
-          "en-US": "en-US-AndrewNeural",
-          "de-DE": "de-DE-KillianNeural",
-          "es-ES": "es-ES-AlvaroNeural",
-          "fr-FR": "fr-FR-RemyNeural"
-        };
-
-        const voice = voiceMap[lang] || voiceMap["en-US"];
-        const tts = new EdgeTTSBrowser(text, voice);
-        const result = await tts.synthesize();
-        const url = URL.createObjectURL(result.audio);
-
-        this.currentAudio.src = url;
-        await this.currentAudio.play();
-        return;
-      } catch (e) {
-        console.error("Enhanced TTS failed, falling back to system TTS", e);
-      }
+    try {
+      await this.offlineTTS.speak(text, lang);
+    } catch (e: any) {
+      console.error(e.message);
+      alert(e.message);
     }
-
-    if (!window.speechSynthesis) {
-      console.warn("Speech synthesis not supported");
-      return;
-    }
-
-    // Cancel any ongoing speech
-    window.speechSynthesis.cancel();
-
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = lang;
-
-    // Try to find a high-quality voice for the language, prioritizing Siri
-    const voices = window.speechSynthesis.getVoices();
-    const siriVoice = voices.find(v => v.lang.startsWith(lang.split("-")[0]) && v.name.includes("Siri"));
-    const premiumVoice = voices.find(v => v.lang.startsWith(lang.split("-")[0]) && (v.name.includes("Premium") || v.name.includes("Enhanced")));
-
-    if (siriVoice) {
-      utterance.voice = siriVoice;
-    } else if (premiumVoice) {
-      utterance.voice = premiumVoice;
-    } else {
-      const standardVoice = voices.find(v => v.lang.startsWith(lang.split("-")[0]));
-      if (standardVoice) {
-        utterance.voice = standardVoice;
-      }
-    }
-
-    window.speechSynthesis.speak(utterance);
   }
 
   toggleAutoplay() {
@@ -330,7 +294,20 @@ export class StudySetFlashcardsComponent implements OnInit {
       return;
     }
 
-    const set = await this.sets.set(this.setId);
+    let set: StudySet | null = null;
+
+    if (navigator.onLine) {
+      try {
+        set = await this.sets.set(this.setId);
+      } catch (e) {
+        console.warn("Failed to fetch set from API, checking offline storage", e);
+      }
+    }
+
+    if (!set) {
+      set = await this.offlineStorage.getStudySet(this.setId);
+    }
+
     if (!set) {
       await this.router.navigate(["404"]);
       return;
@@ -340,9 +317,16 @@ export class StudySetFlashcardsComponent implements OnInit {
     this.metaService.addTag({ name: "description", content: "Begin studying flashcards " + set.title + " study set on Scholarsome. Improve your memorization skills by taking a quiz." });
 
     // sort the cards by index
-    this.cards = set.cards.sort((a, b) => {
+    this.cards = (set.cards as Card[]).sort((a: Card, b: Card) => {
       return a.index - b.index;
     });
+
+    this.offlineStorage.getStudySet(this.setId).then(set => {
+      this.isSavedOffline = !!set;
+    });
+
+    window.addEventListener("online", () => this.isOffline = false);
+    window.addEventListener("offline", () => this.isOffline = true);
 
     this.updateIndex();
   }
